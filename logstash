@@ -1,0 +1,48 @@
+initial Settings 
+
+PUT _template/userstorytemplate 
+{
+	"template": "userstory-*",
+	"settings": {
+		"index.number_of_shards": "1"
+	},
+	"mappings": {
+		"_default_": {
+			"dynamic_templates": [{
+				"message_field": {
+					"mapping": {
+						"index": "not_analyzed",
+						"type": "string"
+					},
+					"match_mapping_type": "string",
+					"match": "message"
+				}
+			},{
+				"string_fields": {
+					"mapping": {
+						"index": "not_analyzed",
+						"type": "string"
+					},
+					"match_mapping_type": "string",
+					"match": "*"
+				}
+			}],
+			"properties": {
+				"dateTime": {
+					"type": "date",
+					"format": "yyyy-MM-dd HH:mm:ss"
+				},
+				  "@timestamp": {
+				    "format": "dateOptionalTime",
+				    "type": "date"
+				},
+				  "@version": {
+				        "index": "not_analyzed",
+				        "type": "integer"
+				}
+
+			}
+		}
+	}
+}
+
