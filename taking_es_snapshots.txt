@@ -1,0 +1,59 @@
+Taking backup in elastic search for vun unique user
+
+1. Enter your s3 accesskey and secret key in elasticsearch.yml
+
+2. curl -XPUT 'http://localhost:9200/_snapshot/s3_vun_unique_user_backup' -d '{
+    "type": "s3",
+    "settings": {
+        "access_key": "xxxxxxxxxxxxxx", 
+ 	"secret_key": "xxxxxxxxxxxxxx",
+        "bucket": "vun.io.unique-users",
+        "region": "xxxxxxxxxxxxxx"
+    }
+}'
+
+// every half an hour or in 1 hour
+3. curl -XPUT 'http://localhost:9200/_snapshot/s3_vun_unique_backup/vun_unique_user_1_{date_wise}?wait_for_completion=true' -d '{
+    "indices": "vun_unique_user"
+    "ignore_unavailable": "true",
+    "include_global_state": false
+}'
+
+// "indices": "vun_unique_user" -- optional part if present then it will restore data on that index else index will be automatically
+// created by _restore api
+4.  curl -XPOST 'localhost:9200/_snapshot/s3_vun_unique_backup/vun_unique_user_{date_wise}/_restore' -d '{
+    "ignore_unavailable": "true",
+    "include_global_state": false
+}';
+
+
+Taking backup in elastic search for vun reporting
+1. Enter your s3 accesskey and secret key in elasticsearch.yml
+2. curl -XPUT 'http://localhost:9200/_snapshot/s3_vun_reporting_backup' -d '{
+    "type": "s3",
+    "settings": {
+        "access_key": "xxxxxxxxxx", 
+ 	"secret_key": "xxxxxxxxxx",
+        "bucket": "vun.io.reporting",
+        "region": "xxxxxxxxx"
+    }
+}'
+
+
+// need to do it 6 hours or so 
+// "indices": "vun_reporting-*" -- optional part if present then it will restore data on that index else index will be automatically
+// created by restore api
+// every half an hour or in 1 hour 
+3. curl -XPUT 'http://localhost:9200/_snapshot/s3_vun_reporting_backup/vun_reporting_{date_wise}?wait_for_completion=true' -d '{
+    "indices": "vun_reporting-*"
+    "ignore_unavailable": "true",
+    "include_global_state": false
+}'
+
+// "indices": "vun_reporting-*" -- optional part if present then it will restore data on that index else index will be automatically
+// created by _restore api
+4.  curl -XPOST 'localhost:9200/_snapshot/s3_vun_unique_backup/vun_reporting_{date_wise}/_restore' -d '{
+    "ignore_unavailable": "true",
+    "include_global_state": false
+}';
+
